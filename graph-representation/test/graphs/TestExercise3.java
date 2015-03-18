@@ -31,14 +31,20 @@ public class TestExercise3 {
 		testWith(input, expectedOutput);
 	}
 
+	@Test
+	public void testWithFiles() throws Exception {
+		Exercise3.main(new String[]{"resources/input1.txt", "output/output1.txt"});
+	}
+	
 	private void testWith(String input, String expected) {
 		Reader reader = new StringReader(input);
 		Writer writer = new StringWriter();
 		
 		Exercise3 ex3 = new Exercise3();
 		ex3.adjMatrixToAdjList(reader, writer);
+		String actual = writer.toString();
 		
-		Assert.assertEquals(expected, writer.toString());
+		Assert.assertEquals(expected, actual);
 	}
 
 	private String textFile(String ... lines) {
