@@ -47,4 +47,14 @@ public class Forest {
 		return null;
 	}
 
+	public Path pathBetweenRootsOf(Vertex v, Vertex w) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void markVertex(Vertex v) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
