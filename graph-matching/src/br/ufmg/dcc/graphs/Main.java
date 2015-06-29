@@ -10,9 +10,9 @@ public class Main {
 		EdmondsMatchingAlgorithm algo = new EdmondsMatchingAlgorithm();
 		
 		Random random = new Random(123L);
-		SimpleGraph g1 = ExampleGraph.generateRandomGraph(8, 0.4, random);
+//		SimpleGraph g1 = ExampleGraph.generateRandomGraph(8, 0.4, random);
 		
-		//SimpleGraph g1 = ExampleGraph.ex1();
+		SimpleGraph g1 = ExampleGraph.ex1();
 		
 		algo.findMaximumMatching(g1);
 		

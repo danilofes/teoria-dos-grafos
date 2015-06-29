@@ -13,8 +13,7 @@ public class SimpleGraph implements Iterable<Vertex> {
 	private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
 	private ArrayList<ArrayList<Edge>> neighbors = new ArrayList<ArrayList<Edge>>();
 	private int edgeId = 0;
-//	private int vertexId = 0;
-	private LinkedList<Vertex> shrinkedVertices = new LinkedList<Vertex>();
+	private LinkedList<ArrayList<Vertex>> shrinkedVertices = new LinkedList<ArrayList<Vertex>>();
 
 	public Vertex addVertex(String name) {
 		int id = this.vertices.size();
@@ -61,16 +60,17 @@ public class SimpleGraph implements Iterable<Vertex> {
 
 	public Vertex shrink(List<Vertex> vertices) {
 		Vertex base = this.addVertex("b_" + vertices.get(0));
+		ArrayList<Vertex> group = new ArrayList<Vertex>();
 		for (Vertex v : vertices) {
 			v.shrinkedTo = base;
-			shrinkedVertices.push(v);
+			group.add(v);
 		}
+		shrinkedVertices.push(group);
 		for (Vertex v : vertices) {
 			for (Edge e : this.edgesOf(v)) {
 				Vertex v2 = e.vertex2();
 				if (v2.shrinkedTo != base) {
-					//this.addEdge(base, v2);
-					Edge edge = new Edge(e.id, base, v2);
+					Edge edge = new Edge(e.id, base, v2, e);
 					if (v.isCovered()) {
 						base.matchingEdge = edge;
 					}
@@ -87,18 +87,13 @@ public class SimpleGraph implements Iterable<Vertex> {
 			return expanded;
 		}
 		Vertex base = this.vertices.get(this.vertices.size() - 1);
-		while (true) {
-			Vertex v = this.shrinkedVertices.peek();
-			if (v == null || !base.equals(v.shrinkedTo)) {
-				break;
-			}
-			this.shrinkedVertices.pop();
+		ArrayList<Vertex> group = this.shrinkedVertices.pop();
+		for (Vertex v : group) {
 			v.shrinkedTo = null;
-			expanded.add(v);
 		}
 		this.vertices.remove(base.id);
 		this.neighbors.remove(base.id);
-		return expanded;
+		return group;
 	}
 	
 	public Edge matchingEdgeOf(Vertex w) {
@@ -156,11 +151,17 @@ public class SimpleGraph implements Iterable<Vertex> {
 		private final int id;
 		private final Vertex vertex1;
 		private final Vertex vertex2;
+		private Edge proxyFor = null;
 
 		private Edge(int id, Vertex vertex1, Vertex vertex2) {
+			this(id, vertex1, vertex2, null);
+		}
+		
+		private Edge(int id, Vertex vertex1, Vertex vertex2, Edge proxyFor) {
 			this.id = id;
 			this.vertex1 = vertex1;
 			this.vertex2 = vertex2;
+			this.proxyFor = proxyFor;
 		}
 
 		public int index() {
@@ -264,9 +265,14 @@ public class SimpleGraph implements Iterable<Vertex> {
 		}
 	}
 
-	public Path lift(Path pathContracted) {
-		// TODO
-		return null;
+	public Path lift(Path path, Vertex base) {
+		Path lifted = new Path();
+		for (Edge e : path.edges()) {
+			if (e.proxyFor != null) {
+				// TODO
+			}
+		}
+		return lifted;
 	}
 
 	public void augmentMatching(Path augumentingPath) {

@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.swing.JFrame;
 
 import org.apache.commons.collections15.Transformer;
-import org.junit.Test;
 
 import br.ufmg.dcc.graphs.SimpleGraph;
 import br.ufmg.dcc.graphs.SimpleGraph.Edge;
@@ -25,7 +24,6 @@ import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 
 public class Visualization {
 
-	@Test
 	public static void view(SimpleGraph graph) {
 		Graph<VVertex, VEdge> g = simpleGraphToJung(graph);
 

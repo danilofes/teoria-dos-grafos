@@ -1,6 +1,7 @@
 package br.ufmg.dcc.graphs;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import br.ufmg.dcc.graphs.SimpleGraph.Edge;
 import br.ufmg.dcc.graphs.SimpleGraph.Vertex;
@@ -11,7 +12,7 @@ public class Forest {
 	private boolean[] markedEdges;
 	private Vertex[] parent;
 	private Vertex[] root;
-	private boolean[] even;
+	private int[] distance;
 	private LinkedList<Vertex> fifo;
 	
 	public Forest(SimpleGraph g) {
@@ -22,11 +23,11 @@ public class Forest {
 		}
 		this.parent = new Vertex[g.maxVertexId() + 1];
 		this.root = new Vertex[g.maxVertexId() + 1];
-		this.even = new boolean[g.maxVertexId() + 1];
+		this.distance = new int[g.maxVertexId() + 1];
 		for (int i = 0; i < this.parent.length; i++) {
 			this.parent[i] = null;
 			this.root[i] = null;
-			this.even[i] = false;
+			this.distance[i] = -1;
 		}
 		this.fifo = new LinkedList<Vertex>();
 	}
@@ -41,7 +42,7 @@ public class Forest {
 	
 	public void addTree(Vertex v) {
 		this.root[v.index()] = v;
-		this.even[v.index()] = true;
+		this.distance[v.index()] = 0;
 		this.fifo.addLast(v);
 	}
 	
@@ -64,15 +65,15 @@ public class Forest {
 		}
 		this.parent[v2.index()] = v1;
 		this.root[v2.index()] = this.root[v1.index()];
-		boolean isEven = !this.even[v1.index()];
-		this.even[v2.index()] = isEven;
-		if (isEven) {
+		int dist = this.distance[v1.index()] + 1;
+		this.distance[v2.index()] = dist;
+		if ((dist % 2) == 0) {
 			this.fifo.addLast(v2);
 		}
 	}
 
 	public boolean isAtEvenDistanceFromRoot(Vertex w) {
-		return this.even[w.index()];
+		return (this.distance[w.index()] % 2) == 0;
 	}
 
 	public Vertex rootOf(Vertex v) {
@@ -99,6 +100,26 @@ public class Forest {
 		}
 		
 		return path;
+	}
+
+	public List<Vertex> getBlossom(Vertex v, Vertex w) {
+		int distV = this.distance[v.index()];
+		int distW = this.distance[w.index()];
+		int dist = Math.min(distV, distW);
+		
+		LinkedList<Vertex> vertices = new LinkedList<Vertex>();
+		Vertex x = v;
+		for (int i = distV; i >= dist; i--) {
+			vertices.addFirst(x);
+			x = this.parent[x.index()];
+		}
+		
+		x = w;
+		for (int i = distW; i > dist; i--) {
+			vertices.addLast(x);
+			x = this.parent[x.index()];
+		}
+		return vertices;
 	}
 
 }

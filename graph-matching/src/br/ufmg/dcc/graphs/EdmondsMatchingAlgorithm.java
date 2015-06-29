@@ -1,5 +1,7 @@
 package br.ufmg.dcc.graphs;
 
+import java.util.List;
+
 import br.ufmg.dcc.graphs.SimpleGraph.Edge;
 import br.ufmg.dcc.graphs.SimpleGraph.Vertex;
 import br.ufmg.dcc.graphs.visualization.Visualization;
@@ -41,9 +43,10 @@ public class EdmondsMatchingAlgorithm {
 					if (forest.isAtEvenDistanceFromRoot(w)) {
 						if (forest.rootOf(v) == forest.rootOf(w)) {
 							// blossom found
-							contractBlossom(g, forest, v, w);
+							List<Vertex> blossom = forest.getBlossom(v, w);
+							Vertex blossomVertex = g.shrink(blossom);
 							Path pathContracted = findAugumentingPath(g);
-							Path path = g.lift(pathContracted);
+							Path path = g.lift(pathContracted, blossomVertex);
 							g.expand();
 							return path;
 						} else {
@@ -57,10 +60,6 @@ public class EdmondsMatchingAlgorithm {
 			//forest.markVertex(v);
 		}
 		return Path.EMPTY;
-	}
-
-	private void contractBlossom(SimpleGraph g, Forest forest, Vertex v, Vertex w) {
-		// TODO Auto-generated method stub
 	}
 
 }
