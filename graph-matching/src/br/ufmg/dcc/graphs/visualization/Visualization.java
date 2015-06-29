@@ -20,19 +20,18 @@ import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 
-public class TestVisualization {
+public class Visualization {
 
 	@Test
-	public static void main(String[] args) {
-
-		Graph<Vertex, String> g = simpleGraphToJung(ExampleGraph.ex1());
+	public static void view(SimpleGraph graph) {
+		Graph<Vertex, Edge> g = simpleGraphToJung(graph);
 
 		// The Layout<V, E> is parameterized by the vertex and edge types
-		Layout<Vertex, String> layout = new ISOMLayout<Vertex, String>(g);
+		Layout<Vertex, Edge> layout = new ISOMLayout<Vertex, Edge>(g);
 		layout.setSize(new Dimension(600, 600)); // sets the initial size of the
 													// space
 		// The BasicVisualizationServer<V,E> is parameterized by the edge types
-		BasicVisualizationServer<Vertex, String> vv = new BasicVisualizationServer<Vertex, String>(
+		BasicVisualizationServer<Vertex, Edge> vv = new BasicVisualizationServer<Vertex, Edge>(
 				layout);
 		vv.setPreferredSize(new Dimension(600, 600)); // Sets the viewing area
 														// size
@@ -42,11 +41,25 @@ public class TestVisualization {
 
 		// Setup up a new vertex to paint transformer...
 		Transformer<Vertex, Paint> vertexPaint = new Transformer<Vertex, Paint>() {
-			public Paint transform(Vertex i) {
-				return Color.GREEN;
+			public Paint transform(Vertex v) {
+				if (v.isCovered()) {
+					return Color.CYAN;
+				}
+				return Color.LIGHT_GRAY;
+			}
+		};
+		
+		// Setup up a new vertex to paint transformer...
+		Transformer<Edge, Paint> edgePaint = new Transformer<Edge, Paint>() {
+			public Paint transform(Edge e) {
+				if (e.isInMatching()) {
+					return Color.BLUE;
+				}
+				return Color.BLACK;
 			}
 		};
 		vv.getRenderContext().setVertexFillPaintTransformer(vertexPaint);
+		vv.getRenderContext().setEdgeDrawPaintTransformer(edgePaint);
 
 		JFrame frame = new JFrame("Simple Graph View");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -55,8 +68,8 @@ public class TestVisualization {
 		frame.setVisible(true);
 	}
 
-	private static Graph<Vertex, String> simpleGraphToJung(SimpleGraph sg) {
-		Graph<Vertex, String> g = new SparseGraph<Vertex, String>();
+	private static Graph<Vertex, Edge> simpleGraphToJung(SimpleGraph sg) {
+		Graph<Vertex, Edge> g = new SparseGraph<Vertex, Edge>();
 		for (Vertex v : sg.vertices()) {
 			g.addVertex(v);
 		}
@@ -64,13 +77,7 @@ public class TestVisualization {
 			for (Edge e : sg.edgesOf(v)) {
 				Vertex v2 = e.vertex2();
 				if (v.index() < v2.index()) {
-					g.addEdge("" + v + "-" + v2, v, v2);
-					if (v.toString().equals("b_8")) {
-						System.out.println("x");
-					}
-					if (v2.toString().equals("b_8")) {
-						System.out.println("x");
-					}
+					g.addEdge(e, v, v2);
 				}
 			}
 		}

@@ -24,13 +24,33 @@ public class SimpleGraph implements Iterable<Vertex> {
 		return v;
 	}
 
-	public void addEdge(Vertex u, Vertex v) {
+	public Edge addEdge(Vertex u, Vertex v) {
 		int id = this.edgeId;
 		this.edgeId++;
-		neighbors.get(u.index()).add(new Edge(id, u, v));
+		Edge edge = new Edge(id, u, v);
+		neighbors.get(u.index()).add(edge);
 		neighbors.get(v.index()).add(new Edge(id, v, u));
+		return edge;
 	}
 
+	public Edge findEdge(Vertex u, Vertex v) {
+		ArrayList<Edge> edges = neighbors.get(u.index());
+		for (Edge e : edges) {
+			if (e.vertex2().equals(v)) {
+				return e;
+			}
+		}
+		return null;
+	}
+	
+	public int maxVertexId() {
+		return vertices.size() - 1;
+	}
+
+	public int maxEdgeId() {
+		return edgeId - 1;
+	}
+	
 	public Iterable<Vertex> vertices() {
 		return this;
 	}
@@ -50,7 +70,11 @@ public class SimpleGraph implements Iterable<Vertex> {
 				Vertex v2 = e.vertex2();
 				if (v2.shrinkedTo != base) {
 					//this.addEdge(base, v2);
-					neighbors.get(base.index()).add(new Edge(e.id, base, v));
+					Edge edge = new Edge(e.id, base, v2);
+					if (v.isCovered()) {
+						base.matchingEdge = edge;
+					}
+					neighbors.get(base.index()).add(edge);
 				}
 			}
 		}
@@ -77,11 +101,15 @@ public class SimpleGraph implements Iterable<Vertex> {
 		return expanded;
 	}
 	
+	public Edge matchingEdgeOf(Vertex w) {
+		return w.matchingEdge;
+	}
+	
 	public static class Vertex {
-		private int id;
-		private String name;
+		private final int id;
+		private final String name;
 		private Vertex shrinkedTo = null;
-		private Vertex coveredBy = null;
+		private Edge matchingEdge = null;
 
 		private Vertex(int id, String name) {
 			super();
@@ -99,7 +127,7 @@ public class SimpleGraph implements Iterable<Vertex> {
 		}
 
 		public boolean isCovered() {
-			return this.coveredBy != null;
+			return this.matchingEdge != null;
 		}
 		
 		private Vertex dereference() {
@@ -123,7 +151,7 @@ public class SimpleGraph implements Iterable<Vertex> {
 		}
 	}
 
-	public static class Edge {
+	public class Edge {
 
 		private final int id;
 		private final Vertex vertex1;
@@ -135,6 +163,10 @@ public class SimpleGraph implements Iterable<Vertex> {
 			this.vertex2 = vertex2;
 		}
 
+		public int index() {
+			return this.id;
+		}
+		
 		public Vertex vertex1() {
 			return this.vertex1;
 		}
@@ -148,6 +180,30 @@ public class SimpleGraph implements Iterable<Vertex> {
 			return "(" + this.vertex1.toString() + "," + this.vertex2.toString() + ")";
 		}
 
+		public void addToMatching() {
+			this.vertex1.matchingEdge = this;
+			Edge dual = this.getDual();
+			dual.vertex1.matchingEdge = dual;
+		}
+		
+		public void removeFromMatching() {
+			this.vertex1.matchingEdge = null;
+			this.vertex2().matchingEdge = null;
+		}
+		
+		public boolean isInMatching() {
+			return this.vertex1.matchingEdge == this;
+		}
+		
+		private Edge getDual() {
+			for (Edge e : edgesOf(this.vertex2())) {
+				if (e.id == this.id) {
+					return e;
+				}
+			}
+			throw new RuntimeException("edge " + this.toString() + " has no dual");
+		}
+		
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof Edge) {
@@ -202,5 +258,20 @@ public class SimpleGraph implements Iterable<Vertex> {
 			return v;
 		}
 		
+	}
+
+	public Path lift(Path pathContracted) {
+		// TODO
+		return null;
+	}
+
+	public void augmentMatching(Path augumentingPath) {
+		for (Edge e : augumentingPath.edges()) {
+			if (e.isInMatching()) {
+				 e.removeFromMatching();
+			} else {
+				e.addToMatching();
+			}
+		}
 	}
 }
