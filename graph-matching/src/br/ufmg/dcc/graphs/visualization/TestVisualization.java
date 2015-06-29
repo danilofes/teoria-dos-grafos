@@ -9,9 +9,9 @@ import javax.swing.JFrame;
 import org.apache.commons.collections15.Transformer;
 import org.junit.Test;
 
-import br.ufmg.dcc.graphs.Edge;
 import br.ufmg.dcc.graphs.SimpleGraph;
-import br.ufmg.dcc.graphs.Vertex;
+import br.ufmg.dcc.graphs.SimpleGraph.Edge;
+import br.ufmg.dcc.graphs.SimpleGraph.Vertex;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
@@ -25,14 +25,14 @@ public class TestVisualization {
 	@Test
 	public static void main(String[] args) {
 
-		Graph<Vertex, Edge> g = simpleGraphToJung(ExampleGraph.ex1());
+		Graph<Vertex, String> g = simpleGraphToJung(ExampleGraph.ex1());
 
 		// The Layout<V, E> is parameterized by the vertex and edge types
-		Layout<Vertex, Edge> layout = new ISOMLayout<Vertex, Edge>(g);
+		Layout<Vertex, String> layout = new ISOMLayout<Vertex, String>(g);
 		layout.setSize(new Dimension(600, 600)); // sets the initial size of the
 													// space
 		// The BasicVisualizationServer<V,E> is parameterized by the edge types
-		BasicVisualizationServer<Vertex, Edge> vv = new BasicVisualizationServer<Vertex, Edge>(
+		BasicVisualizationServer<Vertex, String> vv = new BasicVisualizationServer<Vertex, String>(
 				layout);
 		vv.setPreferredSize(new Dimension(600, 600)); // Sets the viewing area
 														// size
@@ -55,8 +55,8 @@ public class TestVisualization {
 		frame.setVisible(true);
 	}
 
-	private static Graph<Vertex, Edge> simpleGraphToJung(SimpleGraph sg) {
-		Graph<Vertex, Edge> g = new SparseGraph<Vertex, Edge>();
+	private static Graph<Vertex, String> simpleGraphToJung(SimpleGraph sg) {
+		Graph<Vertex, String> g = new SparseGraph<Vertex, String>();
 		for (Vertex v : sg.vertices()) {
 			g.addVertex(v);
 		}
@@ -64,7 +64,13 @@ public class TestVisualization {
 			for (Edge e : sg.edgesOf(v)) {
 				Vertex v2 = e.vertex2();
 				if (v.index() < v2.index()) {
-					g.addEdge(e, v, v2);
+					g.addEdge("" + v + "-" + v2, v, v2);
+					if (v.toString().equals("b_8")) {
+						System.out.println("x");
+					}
+					if (v2.toString().equals("b_8")) {
+						System.out.println("x");
+					}
 				}
 			}
 		}

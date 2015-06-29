@@ -1,19 +1,20 @@
 package br.ufmg.dcc.graphs.visualization;
 
+import java.util.LinkedList;
+
 import br.ufmg.dcc.graphs.SimpleGraph;
-import br.ufmg.dcc.graphs.SimpleGraphImpl;
-import br.ufmg.dcc.graphs.Vertex;
+import br.ufmg.dcc.graphs.SimpleGraph.Vertex;
 
 public class ExampleGraph {
 
 	public static SimpleGraph ex1() {
-		SimpleGraphImpl g = new SimpleGraphImpl();
+		SimpleGraph g = new SimpleGraph();
 
 		Vertex vw = g.addVertex("w");
 		Vertex v1 = g.addVertex("1");
-		Vertex vb = g.addVertex("b");
-
 		g.addEdge(vw, v1);
+
+		Vertex vb = g.addVertex("b");
 		g.addEdge(v1, vb);
 
 		Vertex v2 = g.addVertex("2");
@@ -39,6 +40,22 @@ public class ExampleGraph {
 		g.addEdge(v4, v8);
 		g.addEdge(v8, v9);
 		g.addEdge(v9, v10);
+		
+		LinkedList<Vertex> blossom = new LinkedList<Vertex>();
+		blossom.add(vb);
+		blossom.add(v2);
+		blossom.add(v3);
+		blossom.add(v4);
+		blossom.add(v5);
+		Vertex b1 = g.shrink(blossom);
+		
+		LinkedList<Vertex> blossom2 = new LinkedList<Vertex>();
+		blossom2.add(v8);
+		blossom2.add(v9);
+		g.shrink(blossom2);
+		
+		g.expand();
+		
 		return g;
 	}
 	

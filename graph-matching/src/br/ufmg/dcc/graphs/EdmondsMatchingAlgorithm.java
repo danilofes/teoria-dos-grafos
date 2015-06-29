@@ -1,5 +1,8 @@
 package br.ufmg.dcc.graphs;
 
+import br.ufmg.dcc.graphs.SimpleGraph.Edge;
+import br.ufmg.dcc.graphs.SimpleGraph.Vertex;
+
 public class EdmondsMatchingAlgorithm {
 
 	public Path findAugumentingPath(Matching m) {
