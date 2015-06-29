@@ -5,8 +5,7 @@ import br.ufmg.dcc.graphs.SimpleGraph.Vertex;
 
 public class EdmondsMatchingAlgorithm {
 
-	public Path findAugumentingPath(Matching m) {
-		SimpleGraph g = m.graph();
+	public Path findAugumentingPath(SimpleGraph g) {
 		Forest forest = Forest.create();
 		for (Edge e : m.edges()) {
 			forest.markEdge(e);

@@ -1,7 +1,18 @@
 package br.ufmg.dcc.graphs;
 
-public interface Path {
+import java.util.ArrayList;
+import java.util.List;
 
-	static Path EMPTY = new Path(){};
+import br.ufmg.dcc.graphs.SimpleGraph.Vertex;
+
+public class Path {
+
+	static Path EMPTY = new Path();
 	
+	private final List<Vertex> vertices = new ArrayList<Vertex>();
+	
+	public List<Vertex> vertices() {
+		return this.vertices;
+	}
+
 }

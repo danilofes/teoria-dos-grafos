@@ -81,6 +81,7 @@ public class SimpleGraph implements Iterable<Vertex> {
 		private int id;
 		private String name;
 		private Vertex shrinkedTo = null;
+		private Vertex coveredBy = null;
 
 		private Vertex(int id, String name) {
 			super();
@@ -97,6 +98,10 @@ public class SimpleGraph implements Iterable<Vertex> {
 			return this.name;
 		}
 
+		public boolean isCovered() {
+			return this.coveredBy != null;
+		}
+		
 		private Vertex dereference() {
 			if (this.shrinkedTo == null) {
 				return this;
