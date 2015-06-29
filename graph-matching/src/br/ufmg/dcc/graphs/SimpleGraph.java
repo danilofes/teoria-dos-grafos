@@ -147,7 +147,7 @@ public class SimpleGraph implements Iterable<Vertex> {
 
 		@Override
 		public int hashCode() {
-			return Integer.hashCode(this.id);
+			return this.id;
 		}
 	}
 
@@ -214,7 +214,7 @@ public class SimpleGraph implements Iterable<Vertex> {
 
 		@Override
 		public int hashCode() {
-			return Integer.hashCode(this.id);
+			return this.id;
 		}
 	}
 
@@ -257,7 +257,11 @@ public class SimpleGraph implements Iterable<Vertex> {
 			findNext();
 			return v;
 		}
-		
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	public Path lift(Path pathContracted) {
@@ -266,12 +270,16 @@ public class SimpleGraph implements Iterable<Vertex> {
 	}
 
 	public void augmentMatching(Path augumentingPath) {
+		LinkedList<Edge> edgesToAdd = new LinkedList<Edge>();
 		for (Edge e : augumentingPath.edges()) {
 			if (e.isInMatching()) {
-				 e.removeFromMatching();
+				e.removeFromMatching();
 			} else {
-				e.addToMatching();
+				edgesToAdd.add(e);
 			}
+		}
+		for (Edge e : edgesToAdd) {
+			e.addToMatching();
 		}
 	}
 }

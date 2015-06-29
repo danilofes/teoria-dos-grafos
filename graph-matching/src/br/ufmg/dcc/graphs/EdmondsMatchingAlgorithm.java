@@ -2,13 +2,16 @@ package br.ufmg.dcc.graphs;
 
 import br.ufmg.dcc.graphs.SimpleGraph.Edge;
 import br.ufmg.dcc.graphs.SimpleGraph.Vertex;
+import br.ufmg.dcc.graphs.visualization.Visualization;
 
 public class EdmondsMatchingAlgorithm {
 
 	public void findMaximumMatching(SimpleGraph g) {
 		Path p = this.findAugumentingPath(g);
+		Visualization.view(g);
 		while (!p.isEmpty()) {
 			g.augmentMatching(p);
+			Visualization.view(g);
 			p = this.findAugumentingPath(g);
 		}
 	}

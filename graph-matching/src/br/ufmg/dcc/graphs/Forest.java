@@ -93,7 +93,7 @@ public class Forest {
 		
 		v = e.vertex2();
 		while ((p = this.parent[v.index()]) != null) {
-			Edge edge = g.findEdge(p, v);
+			Edge edge = g.findEdge(v, p);
 			path.append(edge);
 			v = p;
 		}
