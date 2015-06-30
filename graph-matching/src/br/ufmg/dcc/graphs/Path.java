@@ -1,9 +1,11 @@
 package br.ufmg.dcc.graphs;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import br.ufmg.dcc.graphs.SimpleGraph.Edge;
+import br.ufmg.dcc.graphs.SimpleGraph.Vertex;
 
 public class Path {
 
@@ -23,6 +25,13 @@ public class Path {
 		return this;
 	}
 	
+	public Path append(List<Edge> list) {
+		for (Edge e : list) {
+			this.edges.add(e);
+		}
+		return this;
+	}
+	
 	public Path prepend(Edge e) {
 		this.edges.addFirst(e);
 		return this;
@@ -30,6 +39,15 @@ public class Path {
 	
 	public List<Edge> edges() {
 		return this.edges;
+	}
+
+	public List<Vertex> vertices() {
+		List<Vertex> vertices = new ArrayList<Vertex>();
+		for (Edge e : edges) {
+			vertices.add(e.vertex1());
+		}
+		vertices.add(edges.getLast().vertex2());
+		return vertices;
 	}
 
 	public boolean isEmpty() {

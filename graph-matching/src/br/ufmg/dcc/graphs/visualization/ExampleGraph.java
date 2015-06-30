@@ -70,6 +70,36 @@ public class ExampleGraph {
 		return g;
 	}
 
+	public static SimpleGraph ex2() {
+		SimpleGraph g = new SimpleGraph();
+		Vertex vw = g.addVertex("w");
+		Vertex v1 = g.addVertex("1");
+		g.addEdge(vw, v1);
+
+		Vertex vb = g.addVertex("b");
+		Edge e1ToB = g.addEdge(v1, vb);
+
+		Vertex v2 = g.addVertex("2");
+		Vertex v3 = g.addVertex("3");
+		g.addEdge(vb, v2);
+		g.addEdge(vb, v3);
+
+		Vertex v4 = g.addVertex("4");
+		Vertex v5 = g.addVertex("5");
+		Edge e2To4 = g.addEdge(v2, v4);
+		Edge e3To5 = g.addEdge(v3, v5);
+		g.addEdge(v4, v5);
+
+		Vertex v6 = g.addVertex("6");
+		g.addEdge(v5, v6);
+
+		e1ToB.addToMatching();
+		e2To4.addToMatching();
+		e3To5.addToMatching();
+		
+		return g;
+	}
+	
 	public static SimpleGraph generateRandomGraph(int n, double prob, Random random) {
 		SimpleGraph g = new SimpleGraph();
 		for (int i = 0; i < n; i++) {

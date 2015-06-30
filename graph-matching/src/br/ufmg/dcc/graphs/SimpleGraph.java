@@ -265,16 +265,82 @@ public class SimpleGraph implements Iterable<Vertex> {
 		}
 	}
 
-	public Path lift(Path path, Vertex base) {
-		Path lifted = new Path();
-		for (Edge e : path.edges()) {
-			if (e.proxyFor != null) {
-				// TODO
+	public Path lift(Path path, Vertex supervertex, List<Vertex> blossom) {
+		Edge in = null;
+		Edge out = null;
+		Edge[] edges = path.edges().toArray(new Edge[0]);
+		for (Edge e : edges) {
+			if (e.vertex2.shrinkedTo == supervertex) {
+				in = e;
 			}
+			if (e.vertex1 == supervertex) {
+				out = e.proxyFor;
+			}
+		}
+		if (in == null && out == null) {
+			return path;
+		}
+		Vertex v1;
+		Vertex v2;
+		if (in == null) {
+			v1 = blossom.get(0);
+			v2 = out.vertex1;
+		} else if (out == null) {
+			v1 = in.vertex2;
+			v2 = blossom.get(0);
+		} else {
+			v1 = in.vertex2;
+			v2 = out.vertex1;
+		}
+		Path lifted = new Path();
+		int i = 0;
+		for (Edge e : edges) {
+			if (e == in || e == out) {
+				break;
+			}
+			lifted.append(e);
+			i++;
+		}
+		if (in != null) {
+			lifted.append(in);
+			i++;
+		}
+		lifted.append(evenPathBetween(v1, v2, blossom));
+		if (out != null) {
+			lifted.append(out);
+			i++;
+		}
+		for (; i < edges.length; i++) {
+			lifted.append(edges[i]);
 		}
 		return lifted;
 	}
 
+	private List<Edge> evenPathBetween(Vertex v1, Vertex v2, List<Vertex> blossom) {
+		LinkedList<Edge> path = new LinkedList<Edge>();
+		if (v1 == v2) {
+			return path;
+		}
+		int i = blossom.indexOf(v1);
+		int j = blossom.indexOf(v2);
+		if (i < 0 || j < 0) {
+			throw new RuntimeException("invalid blossom");
+		}
+		boolean evenDist = (j - i) % 2 == 0;
+		int dir;
+		if ((i < j && evenDist) || (i > j && !evenDist)) {
+			dir = 1;
+		} else {
+			dir = -1;
+		}
+		for (int pos = i; pos != j; pos = (pos + dir) % blossom.size()) {
+			Vertex u = blossom.get(pos);
+			Vertex v = blossom.get((pos + dir) % blossom.size());
+			path.add(this.findEdge(u, v));
+		}
+		return path;
+	}
+	
 	public void augmentMatching(Path augumentingPath) {
 		LinkedList<Edge> edgesToAdd = new LinkedList<Edge>();
 		for (Edge e : augumentingPath.edges()) {

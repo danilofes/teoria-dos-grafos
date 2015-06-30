@@ -44,9 +44,9 @@ public class EdmondsMatchingAlgorithm {
 						if (forest.rootOf(v) == forest.rootOf(w)) {
 							// blossom found
 							List<Vertex> blossom = forest.getBlossom(v, w);
-							Vertex blossomVertex = g.shrink(blossom);
+							Vertex supervertex = g.shrink(blossom);
 							Path pathContracted = findAugumentingPath(g);
-							Path path = g.lift(pathContracted, blossomVertex);
+							Path path = g.lift(pathContracted, supervertex, blossom);
 							g.expand();
 							return path;
 						} else {
