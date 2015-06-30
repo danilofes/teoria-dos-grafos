@@ -35,7 +35,17 @@ public class SimpleGraph implements Iterable<Vertex> {
 	public Edge findEdge(Vertex u, Vertex v) {
 		ArrayList<Edge> edges = neighbors.get(u.index());
 		for (Edge e : edges) {
-			if (e.vertex2().equals(v)) {
+			if (e.vertex2().equals(v.dereference())) {
+				return e;
+			}
+		}
+		return null;
+	}
+	
+	private Edge findEdgePvt(Vertex u, Vertex v) {
+		ArrayList<Edge> edges = neighbors.get(u.index());
+		for (Edge e : edges) {
+			if (e.vertex2.equals(v)) {
 				return e;
 			}
 		}
@@ -305,7 +315,7 @@ public class SimpleGraph implements Iterable<Vertex> {
 			lifted.append(in);
 			i++;
 		}
-		lifted.append(evenPathBetween(v1, v2, blossom));
+		lifted.append(pathBetween(v1, v2, blossom));
 		if (out != null) {
 			lifted.append(out);
 			i++;
@@ -316,7 +326,7 @@ public class SimpleGraph implements Iterable<Vertex> {
 		return lifted;
 	}
 
-	private List<Edge> evenPathBetween(Vertex v1, Vertex v2, List<Vertex> blossom) {
+	private List<Edge> pathBetween(Vertex v1, Vertex v2, List<Vertex> blossom) {
 		LinkedList<Edge> path = new LinkedList<Edge>();
 		if (v1 == v2) {
 			return path;
@@ -329,14 +339,14 @@ public class SimpleGraph implements Iterable<Vertex> {
 		boolean evenDist = (j - i) % 2 == 0;
 		int dir;
 		if ((i < j && evenDist) || (i > j && !evenDist)) {
-			dir = 1;
-		} else {
 			dir = -1;
+		} else {
+			dir = 1;
 		}
-		for (int pos = i; pos != j; pos = (pos + dir) % blossom.size()) {
+		for (int pos = i; pos != j; pos = (blossom.size() + pos + dir) % blossom.size()) {
 			Vertex u = blossom.get(pos);
-			Vertex v = blossom.get((pos + dir) % blossom.size());
-			path.add(this.findEdge(u, v));
+			Vertex v = blossom.get((blossom.size() + pos + dir) % blossom.size());
+			path.add(this.findEdgePvt(u, v));
 		}
 		return path;
 	}

@@ -16,8 +16,10 @@ public class Path {
 	public Path() {
 	}
 	
-	public Path(Edge edge) {
-		this.edges.add(edge);
+	public Path(Edge ... edges) {
+		for (Edge e : edges) {
+			this.edges.add(e);
+		}
 	}
 	
 	public Path append(Edge e) {

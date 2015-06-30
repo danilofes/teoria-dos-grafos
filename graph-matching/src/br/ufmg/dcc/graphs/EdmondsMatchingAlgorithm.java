@@ -10,10 +10,10 @@ public class EdmondsMatchingAlgorithm {
 
 	public void findMaximumMatching(SimpleGraph g) {
 		Path p = this.findAugumentingPath(g);
-		Visualization.view(g);
+		//Visualization.view(g);
 		while (!p.isEmpty()) {
 			g.augmentMatching(p);
-			Visualization.view(g);
+			//Visualization.view(g);
 			p = this.findAugumentingPath(g);
 		}
 	}
